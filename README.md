@@ -3,7 +3,7 @@ Displays the contents of a text file or files.
 
 This tool is similar to the DOS command type but inspired by old school text typing presentations where text appeared as if someone were typing it in Real Time (hence the name). Usually these presentations would be accompanied by music, ASCII art, and colored text.
 
-Example Uses
+### Example Uses
 
 	TypeRT
 

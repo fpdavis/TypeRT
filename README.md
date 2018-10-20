@@ -7,14 +7,14 @@ This tool is similar to the DOS command type but inspired by old school text typ
 
 	TypeRT
 
-Installation
+### Installation
 
 This tool is written in Python (https://www.python.org). You must have a recent version of Python installed and in your environment path. You should also have the extension ".py" associated with Python.
 	
 Place the file TypeRT.py in any location of your choosing. I recommend a location that is in your PATH environment variable so you will need to type the full path of the file to run it. A good location is in your Python directory under "Scripts".
 
 
-Todo (in order of importance):
+### Todo (in order of importance):
 
    * Read in command line arguments
    * Should support the following command line arguments… 
@@ -29,7 +29,7 @@ Todo (in order of importance):
    * Write support for RTRecorder files
    
    
-Changes (oldest to newest):
+### Changes (oldest to newest):
 
    * Commit to Github
    * Create comment sections

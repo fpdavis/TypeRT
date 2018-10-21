@@ -1,33 +1,35 @@
+##############################################################################
+# Begin Global Config Settings
+#
+# These values are set to the default values and may be changed as needed.
+#
+##############################################################################
+gsaRootDirectories = ["c:/"]
+gsaEndsWith = [".txt", ".csv", ".bat"]
+gfTimeToSleep = 1
+gfLow = -.5
+gfHigh = .3
+gfMaxSleepTime = 1
+
+##############################################################################
+# End of Global Config Settings
+##############################################################################
+#
+# Updates can be found at https://github.com/fpdavis/TypeRT
+#
+##############################################################################
+
 import os
 import sys
 import time
 import random
+import argparse
 from itertools import chain
 from datetime import timedelta
 from enum import Enum  
 
-# ToDo:
-#   * Commit to Github
-#   * Create comment sections
-#   * Create readme file
-#   * Should have a DisplayUsage Method that prints to the console the proper way to invoke the application
-#   * Should provide the begin time, end time, and run time 
-#   * Read in command line arguments
-#   * Should support the following command line arguments… 
-#      --help|-h|/?  – Displays the proper usage of the application including any command line parameters.
-#      --KEY=X       – Any key in the appSettings section of the .config file may be overridden via this command. KEY is the corresponding name of the key in the .config file.
-#   * Write RTRecorder, perhaps as plugins for popular editors?
-#   * Write support for RTRecorder files
-
-saRootDirectories = ["c:/"]
-saEndsWith = [".csv", ".bat"]
-fTimeToSleep = 1
-fLow = -.5
-fHigh = .3
-fMaxSleepTime = 1
-saFileList = []
-sFileToType = "" #"c:/OneDrive/Applications/Python/Lib/venv/scripts/nt/activate.bat"
-
+##############################################################################
+#
 # Support for Verbosity levels for information dense applications.
 #   * Debug - Super detail
 #   * Verbose – Everything Important
@@ -35,35 +37,77 @@ sFileToType = "" #"c:/OneDrive/Applications/Python/Lib/venv/scripts/nt/activate.
 #   * Warning - Bad things that happen, but are expected
 #   * Error - Errors that are recoverable
 #   * Critical - Errors that stop execution
+#
+##############################################################################
 goVerbosityEnum = Enum('Verbosity', 'Critical Error Warning Information Verbose Debug')
 goVerbosity = goVerbosityEnum.Debug
 
+gsaFileList = []
+
 def main(argv):
 
-    if (len(sFileToType) > 0):
-        TypeRTFile(sFileToType)
-    else:
+    global goVerbosity, gsaEndsWith, gfTimeToSleep, gfLow, gfHigh, gfMaxSleepTime
+    
+    oStartTime = time.time()
+        
+    # construct the argument parse and parse the arguments
+    oArgumentParser = argparse.ArgumentParser()
+    oArgumentParser.add_argument('files', metavar='File', type=argparse.FileType('r'), nargs='*', help="Path to file to display")
+
+    oArgumentParser.add_argument("-c", "--Crawl", required=False, action='store_true', help="Crawl the file system starting in the RootDirectories for files ending in EndsWith to display (default: %(default)s)")
+    oArgumentParser.add_argument("-r", "--RootDirectories", required=False, default=gsaRootDirectories, help="Root directories to start search for files in (default: %(default)s)")
+    oArgumentParser.add_argument("-e", "--EndsWith", required=False, default=gsaEndsWith, help="File extensions to search for and display (default: %(default)s)")
+
+    oArgumentParser.add_argument("-t", "--TimeToSleep", required=False, type=float, default=gfTimeToSleep, help="Initial time to sleep on each line (default: %(default)s)")
+    oArgumentParser.add_argument("--Low", required=False, type=float, default=gfLow, help="Low end of range to select sleep time from (default: %(default)s)")
+    oArgumentParser.add_argument("--High", required=False, type=float, default=gfHigh, help="High end of range to select sleep time from (default: %(default)s)")
+    oArgumentParser.add_argument("-m", "--MaxSleepTime", required=False, type=float, default=gfMaxSleepTime, help="Maximum time to sleep, if this is reached TimeToSleep is reset to 0 (default: %(default)s)")
+    oArgumentParser.add_argument("-v", '--Verbosity', default='Debug', const='Error', nargs='?', choices=goVerbosityEnum._member_names_, help='Verbosity level to display (default: %(default)s)')
+
+    args = vars(oArgumentParser.parse_args())
+    
+    goVerbosity = goVerbosityEnum[args["Verbosity"]]
+    gsaEndsWith = args["EndsWith"]
+    gfTimeToSleep = args["TimeToSleep"]
+    gfLow = args["Low"]
+    gfHigh = args["High"]
+    gfMaxSleepTime = args["MaxSleepTime"]
+
+    # Check for standard input
+    # if (sys.stdin.isatty()):
+    #MessageLog("Displaying standard input line by line...", goVerbosityEnum.Information)
+    #for sLine in sys.stdin:
+    #    TypeRT(sLine)
+    
+    if (args["files"] != None and len(args["files"]) > 0):
+        for sEachFile in args["files"]:
+            MessageLog("Displaying File from command line input...", goVerbosityEnum.Information)
+            TypeRT(''.join(sEachFile))
+            
+    if (args["Crawl"] == True):
         while True:
-            
-            GetTextFiles(saRootDirectories, saEndsWith)
-            for sFile in saFileList:
+            GetTextFiles(gsaRootDirectories, gsaEndsWith)
+            for sFile in gsaFileList:
                 TypeRTFile(sFile)
+
+    oEndTime = time.time()
+    MessageLog ("\n\nStart Time: " + time.ctime(oStartTime), goVerbosityEnum.Information)
+    MessageLog ("End Time: " + time.ctime(oEndTime), goVerbosityEnum.Information)
+    MessageLog ("Elapsed Time: " + str(timedelta(seconds=oEndTime - oStartTime)), goVerbosityEnum.Information)
             
-            
-def GetTextFiles(saRootDirectories, saEndsWith):
+def GetTextFiles(gsaRootDirectories, gsaEndsWith):
 
     MessageLog ("Getting File List...", goVerbosityEnum.Information)
     oStartTime = time.time()
 
-    for root, dirs, files in chain.from_iterable(os.walk(sRoot) for sRoot in saRootDirectories):
+    for root, dirs, files in chain.from_iterable(os.walk(sRoot) for sRoot in gsaRootDirectories):
         for oFile in files:
-           if (oFile.lower().endswith(tuple(saEndsWith))):
-               saFileList.append(os.path.join(root, oFile))
+           if (oFile.lower().endswith(tuple(gsaEndsWith))):
+               gsaFileList.append(os.path.join(root, oFile))
                TypeFastRT(os.path.join(root, oFile), True)
 
-    oEndTime = time.time()
-    ElapsedTime = str(timedelta(seconds=oEndTime - oStartTime))  
-    MessageLog ("Dirctory obtained in " + ElapsedTime, goVerbosityEnum.Information)
+    oElapsedTime = str(timedelta(seconds=time.time() - oStartTime))  
+    MessageLog ("Dirctory obtained in " + oElapsedTime, goVerbosityEnum.Information)
        
 def TypeFastRT(sStringToType, newline=False):
     for cCharacter in sStringToType:
@@ -73,15 +117,15 @@ def TypeFastRT(sStringToType, newline=False):
     if (newline): print()
     
 def TypeRT(sStringToType, newline=False):
-    fLocalTimeToSleep = fTimeToSleep # Don't want to modify the global variable
+    fLocalTimeToSleep = gfTimeToSleep # Don't want to modify the global variable
     for cCharacter in sStringToType:
         time.sleep(fLocalTimeToSleep) 
         print (cCharacter, end='', flush=True)
         if (cCharacter == ' '): 
             fLocalTimeToSleep = .1
         else:
-            fLocalTimeToSleep += random.uniform(fLow, fHigh)
-            if (fLocalTimeToSleep < 0 or fLocalTimeToSleep > fMaxSleepTime): fLocalTimeToSleep = 0
+            fLocalTimeToSleep += random.uniform(gfLow, gfHigh)
+            if (fLocalTimeToSleep < 0 or fLocalTimeToSleep > gfMaxSleepTime): fLocalTimeToSleep = 0
 
     if (newline): print()
             

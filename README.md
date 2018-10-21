@@ -16,16 +16,11 @@ Place the file TypeRT.py in any location of your choosing. I recommend a locatio
 
 ### Todo (in order of importance):
 
-   * Read in command line arguments
-   * Should support the following command line arguments… 
-        --help|-h|/?  – Displays the proper usage of the application including any command line parameters.
-        --KEY=X       – Any key in the the .config file may be overridden via this command. 
-		                KEY is the corresponding name of the key in the .config file.
-   * Should have a DisplayUsage Method that prints to the console the proper way to invoke the application
-   * Should provide the begin time, end time, and run time 
-   * Create a config file?
+   * Display from standard input (UNIX style pipes)
+   * Read in config values from a specified file
    * Auto update - who doesn't love auto updates!
    * Write RTRecorder, perhaps as plugins for popular editors?
+   * Add sound
    * Write support for RTRecorder files
    
    
@@ -34,3 +29,14 @@ Place the file TypeRT.py in any location of your choosing. I recommend a locatio
    * Commit to Github
    * Create comment sections
    * Create readme file
+   
+   * Read in command line arguments
+   * Should support the following command line arguments… 
+        --help|-h|/?  – Displays the proper usage of the application including any command line parameters.
+        --KEY=X       – Any key in the the .config file may be overridden via this command. 
+		                KEY is the corresponding name of the key in the .config file.
+   * Should have a DisplayUsage Method that prints to the console the proper way to invoke the application
+   * Create a config file? - No need to complicate install with a config file. Moved default configuration settings
+     to top of the file. Though I could still be talked into adding the ability to read in default values from an
+	 external config file.
+   * Should provide the begin time, end time, and run time 

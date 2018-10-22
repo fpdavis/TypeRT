@@ -5,7 +5,33 @@ This tool is similar to the DOS command type but inspired by old school text typ
 
 ### Example Uses
 
-	TypeRT
+	Usage: TypeRT.py [-h] [-c] [-r ROOTDIRECTORIES] [-e ENDSWITH] [-t TIMETOSLEEP]
+                 [--Low LOW] [--High HIGH] [-m MAXSLEEPTIME]
+                 [-v [{Critical,Error,Warning,Information,Verbose,Debug}]]
+                 [File [File ...]]
+
+	Positional Arguments:
+	
+		File                  Path to file to display
+
+	Optional Arguments:
+	
+		-h, --help          Show this help message and exit
+		-c, --Crawl         Crawl the file system starting in the RootDirectories
+							for files ending in EndsWith to display (default: False)
+		-r ROOTDIRECTORIES, --RootDirectories ROOTDIRECTORIES
+							Root directories to start search for files in (default: ['c:/'])
+		-e ENDSWITH, --EndsWith ENDSWITH
+							File extensions to search for and display (default: ['.txt', '.csv', '.bat'])
+		-t TIMETOSLEEP, --TimeToSleep TIMETOSLEEP
+							Initial time to sleep on each line (default: 1)
+		--Low LOW           Low end of range to select sleep time from (default: -0.5)
+		--High HIGH         High end of range to select sleep time from (default: 0.3)
+		-m MAXSLEEPTIME, --MaxSleepTime MAXSLEEPTIME
+							Maximum time to sleep, if this is reached TimeToSleep
+							is reset to 0 (default: 1)
+		-v [{Critical,Error,Warning,Information,Verbose,Debug}], --Verbosity [{Critical,Error,Warning,Information,Verbose,Debug}]
+							Verbosity level to display (default: Debug)
 
 ### Installation
 
